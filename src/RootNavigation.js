@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { StackActions } from '@react-navigation/native';
 

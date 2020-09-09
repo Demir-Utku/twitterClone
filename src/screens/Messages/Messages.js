@@ -1,21 +1,56 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, FlatList, Image, ActivityIndicator, Alert } from 'react-native';
 import { connect } from 'react-redux';
-import { signOut} from '../../actions'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import { Fab, Icon } from 'native-base';
+import { colors } from '../../style';
+
+import { getRooms } from '../../actions'
+
+import MessageItems from './MessageItems';
+import { USER } from '../../actions/types';
 
 const Messages = (props) => {
 
     useEffect(() => {
+        props.getRooms()
+        console.log('Gelen props.', USER.notif);
+
+        USER.notif ? props.navigation.navigate('MessageDetail', { data: { path: USER.notif.path } } ) : null
     }, [])
 
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text onPress={() => {
-                // props.navigation.navigate('MessageDetail')
-                props.signOut()
-                
-            }}>Messages screen</Text>
+        <View style={{ flex: 1 }}>
+
+            <FlatList
+                style={{ flex: 1, backgroundColor: 'white', }}
+                data={props.rooms}
+                keyExtractor={(item, index) => index.toString()}
+                ListEmptyComponent={() => {
+                    return (
+                        <View style={{ alignItems: 'center', padding: 20}}>
+                                <Text>Herhangi bir mesaj bulunamadı</Text>
+                        </View>
+                    )
+                }}
+                renderItem={({ item, index }) =>
+                    <MessageItems
+                        data={item}
+                        index={index}
+                        props={props}
+                    />
+                }
+            />
+
+
+            <Fab
+                containerStyle={{}}
+                style={{ backgroundColor: colors.main }}
+                position="bottomRight"
+                onPress={() => { props.navigation.navigate('GetUsers') }}>
+                <Icon name="plus" type='FontAwesome' style={{ color: 'white' }} />
+            </Fab>
+
         </View>
     );
 }
@@ -27,9 +62,9 @@ const styles = {
 
 
 
-const mapStateToProps = ({ charactersResponse }) => {
-    const { loadingCharacter, characters } = charactersResponse;
-    return { loadingCharacter, characters };
+const mapStateToProps = ({ messageResponse }) => {
+    const { loadingGetRoom, rooms } = messageResponse;
+    return { loadingGetRoom, rooms };
 };
 
-export default connect(mapStateToProps, { signOut })(Messages);
+export default connect(mapStateToProps, { getRooms })(Messages);
