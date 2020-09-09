@@ -17,7 +17,6 @@ const CheckBox = (props) => {
                     justifyContent: 'center',
                     borderRadius: 2
                 }}
-    
             >
                 {props.status && <View
                     style={{
